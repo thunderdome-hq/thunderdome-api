@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+option go_package = "github.com/thunderdome-hq/thunderdome-api/api;api";
+
+import "google/api/annotations.proto";
+
+package thunderdome;
+
+message User {
+    string email = 1;
+    string github = 2;
+    string status = 3;
+    bool accepted = 4;
+    bool verified = 5;
+}
+
+message Ticket {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string due_date = 4;
+    string repository = 6;
+    string user = 7;
+    repeated string contacts = 8;
+    string pull_request = 9;
+}
+
+message Credentials {
+    string email = 1;
+    string token = 2;
+}
+
+message GetStatusRequest {
+    Credentials credentials = 1;
+}
+
+message GetStatusResponse {
+    User user = 1;
+    Ticket ticket = 2;
+}
+
+message JoinUserRequest {
+    // Email of the user to join
+    string email = 1;
+    // Github login of the user to join
+    string github = 2;
+}
+
+message JoinUserResponse {
+    User user = 1;
+    // Token will be invalid until approval
+    string token = 2;
+    // Message for user
+    string message = 3;
+}
+
+message LeaveUserRequest {
+    Credentials credentials = 1;
+}
+
+message LeaveUserResponse {
+    // Message for user
+    string message = 2;
+}
+
+message AcceptUserRequest {
+    // The email of the user to accept
+    string email = 1;
+    // Whether to accept or reject the user
+    bool accept = 2;
+    // Single use key to authorize the request
+    string key = 3;
+}
+
+message AcceptUserResponse {
+    // Message for admin
+    string message = 1;
+}
+
+message VerifyUserRequest {
+    // Email of the user to verify
+    string email = 1;
+    // Secret key to verify user
+    string key = 2;
+}
+
+message VerifyUserResponse {
+    // Message for user
+    string message = 1;
+}
+
+message ListTicketsRequest {
+    Credentials credentials = 1;
+}
+
+message ListTicketsResponse {
+    string message = 1;
+    repeated Ticket tickets = 2;
+}
+
+message ClaimTicketRequest {
+    Credentials credentials = 1;
+    string id = 2;
+}
+
+message ClaimTicketResponse {
+    string message = 1;
+    Ticket ticket = 2;
+
+    string pull_request_url = 3;
+	  string https_repo_clone_url = 4;
+    string ssh_repo_clone_url = 5;
+	  string branch_name = 6;
+}
+
+message DropTicketRequest {
+    Credentials credentials = 1;
+}
+
+message DropTicketResponse {
+    string message = 1;
+}
+
+service Thunderdome {
+    rpc GetStatus(GetStatusRequest) returns (GetStatusResponse) {}
+
+    rpc JoinUser(JoinUserRequest) returns (JoinUserResponse) {}
+    rpc LeaveUser(LeaveUserRequest) returns (LeaveUserResponse) {}
+
+    rpc AcceptUser(AcceptUserRequest) returns (AcceptUserResponse) {
+        // Allow GET requests for AcceptUser so that we can use a link:
+        // GET /joins?email={email}&accept={accept}&key={key}
+        option (google.api.http) = {get: "/accept"};
+    }
+
+    rpc VerifyUser(VerifyUserRequest) returns (VerifyUserResponse) {
+        // Allow GET requests for VerifyUser so that we can use a link:
+        // GET /joins?email={email}&accept={accept}&key={key}
+        option (google.api.http) = {get: "/verify"};
+    }
+
+    rpc ListTickets(ListTicketsRequest) returns (ListTicketsResponse) {}
+    rpc ClaimTicket(ClaimTicketRequest) returns (ClaimTicketResponse) {}
+    rpc DropTicket(DropTicketRequest) returns (DropTicketResponse) {}
+}
