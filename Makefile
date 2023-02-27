@@ -7,3 +7,8 @@ init:
 
 build:
 	buf generate
+
+push: build
+	buf mod update
+	buf build
+	buf push

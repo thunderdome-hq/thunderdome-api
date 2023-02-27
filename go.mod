@@ -1,10 +1,10 @@
-module github.com/thunderdome-hq/thunderdome-api
+module thunderdome-api
 
 go 1.19
 
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0
-	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f
+	google.golang.org/genproto v0.0.0-20230209215440-0dfe4f8abfcc
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.1
 )
