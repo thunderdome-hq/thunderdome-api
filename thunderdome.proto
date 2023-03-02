@@ -154,6 +154,6 @@ service Thunderdome {
     rpc GithubWebhook(GithubWebhookRequest) returns (GithubWebhookResponse) {
         // Allow GET requests for VerifyUser so that we can use a link:
         // GET /joins?email={email}&accept={accept}&key={key}
-        option (google.api.http) = {get: "/github"};
+        option (google.api.http) = {post: "/github"};
     }
 }
