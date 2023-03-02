@@ -121,6 +121,14 @@ message DropTicketResponse {
     string message = 1;
 }
 
+message GithubWebhookRequest {
+    string body = 1;
+}
+
+message GithubWebhookResponse {
+    string status = 1;
+}
+
 service Thunderdome {
     rpc GetStatus(GetStatusRequest) returns (GetStatusResponse) {}
 
@@ -142,4 +150,10 @@ service Thunderdome {
     rpc ListTickets(ListTicketsRequest) returns (ListTicketsResponse) {}
     rpc ClaimTicket(ClaimTicketRequest) returns (ClaimTicketResponse) {}
     rpc DropTicket(DropTicketRequest) returns (DropTicketResponse) {}
+
+    rpc GithubWebhook(GithubWebhookRequest) returns (GithubWebhookResponse) {
+        // Allow GET requests for VerifyUser so that we can use a link:
+        // GET /joins?email={email}&accept={accept}&key={key}
+        option (google.api.http) = {get: "/github"};
+    }
 }

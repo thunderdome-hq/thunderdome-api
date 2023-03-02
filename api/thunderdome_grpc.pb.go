@@ -30,6 +30,7 @@ type ThunderdomeClient interface {
 	ListTickets(ctx context.Context, in *ListTicketsRequest, opts ...grpc.CallOption) (*ListTicketsResponse, error)
 	ClaimTicket(ctx context.Context, in *ClaimTicketRequest, opts ...grpc.CallOption) (*ClaimTicketResponse, error)
 	DropTicket(ctx context.Context, in *DropTicketRequest, opts ...grpc.CallOption) (*DropTicketResponse, error)
+	GithubWebhook(ctx context.Context, in *GithubWebhookRequest, opts ...grpc.CallOption) (*GithubWebhookResponse, error)
 }
 
 type thunderdomeClient struct {
@@ -112,6 +113,15 @@ func (c *thunderdomeClient) DropTicket(ctx context.Context, in *DropTicketReques
 	return out, nil
 }
 
+func (c *thunderdomeClient) GithubWebhook(ctx context.Context, in *GithubWebhookRequest, opts ...grpc.CallOption) (*GithubWebhookResponse, error) {
+	out := new(GithubWebhookResponse)
+	err := c.cc.Invoke(ctx, "/thunderdome.Thunderdome/GithubWebhook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ThunderdomeServer is the server API for Thunderdome service.
 // All implementations must embed UnimplementedThunderdomeServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type ThunderdomeServer interface {
 	ListTickets(context.Context, *ListTicketsRequest) (*ListTicketsResponse, error)
 	ClaimTicket(context.Context, *ClaimTicketRequest) (*ClaimTicketResponse, error)
 	DropTicket(context.Context, *DropTicketRequest) (*DropTicketResponse, error)
+	GithubWebhook(context.Context, *GithubWebhookRequest) (*GithubWebhookResponse, error)
 	mustEmbedUnimplementedThunderdomeServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedThunderdomeServer) ClaimTicket(context.Context, *ClaimTicketR
 }
 func (UnimplementedThunderdomeServer) DropTicket(context.Context, *DropTicketRequest) (*DropTicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DropTicket not implemented")
+}
+func (UnimplementedThunderdomeServer) GithubWebhook(context.Context, *GithubWebhookRequest) (*GithubWebhookResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GithubWebhook not implemented")
 }
 func (UnimplementedThunderdomeServer) mustEmbedUnimplementedThunderdomeServer() {}
 
@@ -312,6 +326,24 @@ func _Thunderdome_DropTicket_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Thunderdome_GithubWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GithubWebhookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ThunderdomeServer).GithubWebhook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/thunderdome.Thunderdome/GithubWebhook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ThunderdomeServer).GithubWebhook(ctx, req.(*GithubWebhookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Thunderdome_ServiceDesc is the grpc.ServiceDesc for Thunderdome service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var Thunderdome_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DropTicket",
 			Handler:    _Thunderdome_DropTicket_Handler,
+		},
+		{
+			MethodName: "GithubWebhook",
+			Handler:    _Thunderdome_GithubWebhook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
