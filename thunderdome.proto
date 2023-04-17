@@ -6,12 +6,18 @@ import "google/api/annotations.proto";
 
 package thunderdome;
 
-message User {
+message Credentials {
     string email = 1;
     string github = 2;
-    string status = 3;
-    bool accepted = 4;
-    bool verified = 5;
+    string token = 3;
+}
+
+
+message User {
+    Credentials credentials = 1;
+    string status = 2;
+    bool accepted = 3;
+    bool verified = 4;
 }
 
 message Ticket {
@@ -22,99 +28,85 @@ message Ticket {
     string repository = 6;
     string user = 7;
     repeated string contacts = 8;
-    string pull_request = 9;
+    string branch_name = 9;
+    string pull_request = 10;
+    string https_url = 11;
+    string ssh_url = 12;
 }
 
-message Credentials {
-    string email = 1;
-    string token = 2;
+message Request {
+    Credentials credentials = 1;
+}
+
+message Response {
+    string text = 1;
 }
 
 message GetStatusRequest {
-    Credentials credentials = 1;
+    Request request = 1;
 }
 
 message GetStatusResponse {
-    User user = 1;
-    Ticket ticket = 2;
+    Response response = 1;
+    User user = 2;
+    Ticket ticket = 3;
 }
 
 message JoinUserRequest {
-    // Email of the user to join
-    string email = 1;
-    // Github login of the user to join
-    string github = 2;
+    Request request = 1;
 }
 
 message JoinUserResponse {
-    User user = 1;
-    // Token will be invalid until approval
-    string token = 2;
-    // Message for user
-    string message = 3;
+    Response response = 1;
+    User user = 2;
 }
 
 message LeaveUserRequest {
-    Credentials credentials = 1;
+    Request request = 1;
 }
 
 message LeaveUserResponse {
-    // Message for user
-    string message = 2;
+    Response response = 1;
 }
 
 message AcceptUserRequest {
-    // The email of the user to accept
-    string email = 1;
-    // Whether to accept or reject the user
-    bool accept = 2;
-    // Single use key to authorize the request
-    string key = 3;
+    Request request = 1;
+    bool accepted = 2;
 }
 
 message AcceptUserResponse {
-    // Message for admin
-    string message = 1;
+    Response response = 1;
 }
 
 message VerifyUserRequest {
-    // Email of the user to verify
-    string email = 1;
-    // Secret key to verify user
-    string key = 2;
+    Request request = 1;
 }
 
 message VerifyUserResponse {
-    // Message for user
-    string message = 1;
+    Response response = 1;
 }
 
 message ListTicketsRequest {
-    Credentials credentials = 1;
+    Request request = 1;
 }
 
 message ListTicketsResponse {
-    string message = 1;
+    Response response = 1;
     repeated Ticket tickets = 2;
 }
 
 message ClaimTicketRequest {
-    Credentials credentials = 1;
+    Request request = 1;
     string id = 2;
 }
 
 message ClaimTicketResponse {
-    string message = 1;
+    Response response = 1;
     Ticket ticket = 2;
-
-    string pull_request_url = 3;
-	  string https_repo_clone_url = 4;
-    string ssh_repo_clone_url = 5;
-	  string branch_name = 6;
 }
 
 message DropTicketRequest {
-    Credentials credentials = 1;
+    Request request = 1;
 }
 
 message DropTicketResponse {
