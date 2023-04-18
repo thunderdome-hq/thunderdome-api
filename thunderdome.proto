@@ -110,7 +110,7 @@ message DropTicketRequest {
 }
 
 message DropTicketResponse {
-    string message = 1;
+    Response response = 1;
 }
 
 message GithubWebhookRequest {
