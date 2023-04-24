@@ -107,6 +107,7 @@ message ClaimTicketResponse {
 
 message DropTicketRequest {
     Request request = 1;
+    string id = 2;
 }
 
 message DropTicketResponse {
